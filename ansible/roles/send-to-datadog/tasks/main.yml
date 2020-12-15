@@ -1,0 +1,31 @@
+- name: copy python file
+  copy:
+    src: temp.py
+    dest: ~/
+
+- name: set Datadog API key
+  lineinfile:
+    dest: ~/.bashrc
+    insertafter: 'EOF'
+    line: "export DATADOG_APIKEY='{{ api_key }}'"
+  vars:
+    api_key: "{{ lookup('env', 'DATADOG_APIKEY') }}"
+
+# - name: start DogStatsD
+#   docker_container:
+#     name: DogStatsD
+#     image: datadog/agent:latest
+#     volumes:
+#       - /var/run/docker.sock:/var/run/docker.sock:ro
+#       - /proc/:/host/proc/:ro
+#       - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+#     ports:
+#       - 8125:8125/udp
+#     env:
+#       DD_API_KEY: ansible_env.DATADOG_APIKEY
+#       DD_DOGSTATSD_NON_LOCAL_TRAFFIC: "true"
+
+# - name: execute python
+#   shell: "(/home/ubuntu/.pyenv/shims/python ~/temp.py >/dev/null 2>&1 &)"
+#   async: 10
+#   poll: 0

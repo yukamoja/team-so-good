@@ -1,0 +1,7 @@
+install_packages:
+  - tmux
+  - vim
+  - make
+  - htop
+  - iftop
+  - python

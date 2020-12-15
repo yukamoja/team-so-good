@@ -1,0 +1,38 @@
+- name: install package before install pyenv
+  apt:
+    name: "{{ install_package }}"
+    state: present
+  tags: add-pyenv
+  become: yes
+
+- name: Just get information about the repository whether or not it has already been cloned locally
+  git:
+    repo: 'https://github.com/pyenv/pyenv.git'
+    dest: ~/.pyenv
+    clone: yes
+    update: no
+  tags: add-pyenv
+
+- name: insert pyenv PATH
+  blockinfile:
+    dest: ~/.bashrc
+    insertafter: 'EOF'
+    content: |
+      export PYENV_ROOT="$HOME/.pyenv"
+      export PATH="$PYENV_ROOT/bin:$PATH"
+      eval "$(pyenv init -)"
+  tags: add-pyenv
+
+- name: install python 3.8.5 by pyenv
+  shell: "/home/ubuntu/.pyenv/bin/pyenv install 3.8.5"
+
+- name: switch python version to 3.8.5 by pyenv
+  shell: "/home/ubuntu/.pyenv/bin/pyenv global 3.8.5"
+
+- name: execute python version
+  shell: "python -V"
+  register: python_version
+
+- name: debug python verion
+  debug:
+    msg: "{{ python_version }}"

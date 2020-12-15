@@ -1,0 +1,39 @@
+- name: remove "docker docker-engine docker.io" packages
+  apt: 
+    name: "{{ remove_package }}"
+    state: absent
+  become: yes
+
+- name: install "apt-transport-https ca-certificates curl software-properties-common" packages
+  apt:
+    name: "{{ setup_repository }}"
+    state: present
+  become: yes
+
+- name: add apt key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+  become: yes
+
+- name: add apt repository
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+    state: present
+  become: yes
+
+- name: Update and Upgrade
+  apt:
+    update_cache: "yes"
+    upgrade: "dist"
+  become: yes
+
+- name: install docker-ce
+  apt:
+    name: "{{ install_docker }}"
+    state: present
+  become: yes
+
+- name: add ubuntu user to docker group
+  command: gpasswd docker -a ubuntu
+  become: yes
